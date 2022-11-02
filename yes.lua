@@ -9,7 +9,7 @@ if not game:IsLoaded() then
 end
 repeat
     task.wait()
-until game:GetService("Players")
+until game:GetService("Players") and game:GetService("CoreGui")
 loadstring(game:HttpGet("https://pastebin.com/raw/tUUGAeaH", true))()
 
 local BotsName = getgenv().BotsName
@@ -28,15 +28,12 @@ local ExecutorDetector =
     SONA_LOADED and "Sona" or
     identifyexecutor and "Script-Ware" or
     "Unknown Exploit (Not Recommended)"
+
 local swarmplr = nil
 local swarmnum = nil
 local bangplr = nil
 local localplr = game:GetService("Players").LocalPlayer
 local BotsInteger = 0
-if game.CoreGui:FindFirstChild("Main") then
-    game.CoreGui:FindFirstChild("Main"):Destroy()
-    game.CoreGui:FindFirstChild("Load"):Destroy()
-end
 
 local function filesupdate()
     if not isfolder("Extorius Bots") then
@@ -63,6 +60,8 @@ local function filesupdate()
         end
     end
 end
+filesupdate()
+
 local function checkbot(botname, botnumber)
     if localplr.Name:match(BotsName) then
         filesupdate()
@@ -99,6 +98,11 @@ if lgVarsTbl then
 end
 if not localplr.Name:match(BotsName) then
     if localplr.Name == MasterName then
+        setfpscap(PlayerFps)
+        if PlayerAntiLag then
+           game.Workspace.StreamingEnabled = false
+        end
+
         local function updatebot(botname, botnumber, to)
             filesupdate()
             original = tostring(readfile("Extorius Bots/enabled.txt"))
@@ -353,11 +357,6 @@ if not localplr.Name:match(BotsName) then
         local ToggleButton = Instance.new("ImageButton")
 
         --Properties:
-        
-        spoof(Main, "Name", syn.crypt.random(32))
-        if syn then
-            syn.protect_gui(Main)
-        end
         
         Main.Name = "Main"
         Main.Enabled = false
@@ -998,10 +997,11 @@ if not localplr.Name:match(BotsName) then
         end
         
         while task.wait() do
-            if Name_2 then
-                Name_2.Text = tostring(readfile("Extorius Bots/master.txt"))
-            end
-        end
+			if Name_2 then
+				Name_2.Text = tostring(readfile("Extorius Bots/master.txt"))
+			end
+		end
+        
         return
     end
     return
@@ -1839,8 +1839,10 @@ LPH_NO_VIRTUALIZE(
                             task.wait(2)
                             game:Shutdown()
                         elseif message:match("!say") then
+                        	local ChatMain = require(localplr.PlayerScripts.ChatScript.ChatMain)
+							ChatMain.MessagePosted:fire(string.gsub(originalmsg, "!say ", ""))
                             game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(
-                                string.gsub(originalmsg, "!say", ""),
+                                string.gsub(originalmsg, "!say ", ""),
                                 "All"
                             )
                         elseif message == "!advertise" then
