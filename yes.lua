@@ -1069,6 +1069,10 @@ local function killPlr(target)
         bang:Stop()
         bangAnim:Destroy()
     end
+    if circleloop then
+		circleloop:Disconnect()
+	end
+	
     alocalplr = game:GetService("Players").LocalPlayer
     alocalchar = alocalplr.Character or alocalplr.CharacterAdded:Wait()
     alocalhrp = alocalchar:WaitForChild("HumanoidRootPart")
@@ -1137,6 +1141,10 @@ local function voidPlr(target)
         bang:Stop()
         bangAnim:Destroy()
     end
+    if circleloop then
+		circleloop:Disconnect()
+	end
+	
     alocalplr = game:GetService("Players").LocalPlayer
     alocalchar = alocalplr.Character or alocalplr.CharacterAdded:Wait()
     alocalhrp = alocalchar:WaitForChild("HumanoidRootPart")
@@ -1248,6 +1256,10 @@ local function bringPlr(target)
         bang:Stop()
         bangAnim:Destroy()
     end
+    if circleloop then
+		circleloop:Disconnect()
+	end
+	
     alocalplr = game:GetService("Players").LocalPlayer
     alocalchar = alocalplr.Character or alocalplr.CharacterAdded:Wait()
     alocalhrp = alocalchar:WaitForChild("HumanoidRootPart")
@@ -1345,6 +1357,23 @@ local function re()
     task.wait(usernum / 2)
     gethrp().CFrame = gobackto
 end
+local function circle()
+	sine, cosine, radians = math.sin, math.cos, math.rad
+	radius=12
+	user = string.gsub(localplr.Name, "[^%-%d]", "")
+    usernum = tonumber(user)
+    local highestnum=0
+    for _,v in ipairs(game:GetService("Players"):GetPlayers()) do
+    	user_2=string.gsub(v.Name,"[^%-%d]", "")
+    	usernum_2=tonumber(user_2)
+    	if usernum_2 >= highestnum then
+    		highestnum=usernum_2
+		end
+	end
+    
+    angle=radians(360/highestnum)*usernum
+    gethrp().Position=getmasterhrp().Position+Vector3.new(cosine(angle)*radius,0,sine(angle)*radius)
+end
 local function commands()
     LPH_NO_VIRTUALIZE(
         function()
@@ -1375,7 +1404,9 @@ local function commands()
                 "!toggleseat - Say the command to toggle on or off, disables bots sitting while on",
                 "!bang (Username After) - Bangs that player 😳😳😳😳😳",
                 "!unbang - Unbangs anyone being banged",
-                "!distance (Number Here) - Sets the distance in between bots (in studs) for commands like !follow"
+                "!distance (Number Here) - Sets the distance in between bots (in studs) for commands like !follow",
+                "!circle - Makes all the bots surround you in a circle formation",
+                "!loopcircle - Loops make all the bots surround you in a circle formation"
             }
             getgenv().TotalBots = 0
             for _, v in ipairs(game:GetService("Players"):GetPlayers()) do
@@ -1719,6 +1750,9 @@ LPH_NO_VIRTUALIZE(
                                 bang:Stop()
                                 bangAnim:Destroy()
                             end
+                            if circleloop then
+								circleloop:Disconnect()
+							end
                             swarmnum = 1
                             swarmplr = string.gsub(message, "!swarm1 ", "")
                             swarmloop = game:GetService("RunService").RenderStepped:Connect(swarmfunction)
@@ -1743,6 +1777,9 @@ LPH_NO_VIRTUALIZE(
                                 bang:Stop()
                                 bangAnim:Destroy()
                             end
+                            if circleloop then
+								circleloop:Disconnect()
+							end
                             swarmnum = 2
                             swarmplr = string.gsub(message, "!swarm2 ", "")
                             swarmloop = game:GetService("RunService").RenderStepped:Connect(swarmfunction)
@@ -1772,6 +1809,9 @@ LPH_NO_VIRTUALIZE(
                             if followloop then
                                 followloop:Disconnect()
                             end
+                            if circleloop then
+								circleloop:Disconnect()
+							end
                             bangplr = string.gsub(message, "!bang ", "")
                             if not bangAnim then
                                 bangAnim = Instance.new("Animation")
@@ -1795,6 +1835,34 @@ LPH_NO_VIRTUALIZE(
                                     "All"
                                 )
                             end
+						elseif message=="!circle" then
+							circle()
+						elseif message=="!loopcircle" then
+							if swarmloop then
+                                swarmloop:Disconnect()
+                            end
+                            if bodythrust then
+                                bodythrust:Destroy()
+                            end
+                            if hideloop then
+                                hideloop:Disconnect()
+                            end
+                            if lineloop then
+                                lineloop:Disconnect()
+                            end
+                            if followloop then
+                                followloop:Disconnect()
+                            end
+                            if bangloop then
+                                bangloop:Disconnect()
+                                bang:Stop()
+                                bangAnim:Destroy()
+                            end
+							circleloop=game:GetService("RunService").RenderStepped:Connect(circle)
+						elseif message=="!unloopcircle" then
+							if circleloop then
+								circleloop:Disconnect()
+							end
                         end
                     end
                     if player == tostring(MasterName) then
